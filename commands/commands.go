@@ -13,5 +13,11 @@ func Commands() []cli.Command {
 			Usage:   "Lists all projects of a Gerrit instance",
 			Action:  ListProjects,
 		},
+		{
+			Name:    "crawl",
+			Aliases: []string{"c"},
+			Usage:   "Crawls a Gerrit instance",
+			Action:  Crawl,
+		},
 	}
 }
