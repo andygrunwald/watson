@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/andygrunwald/watson/commands"
 	"github.com/codegangsta/cli"
 	"os"
 )
@@ -30,26 +31,17 @@ func main() {
 		fmt.Printf("Hi, i am %s. Nice to meet you.\n", Name)
 		fmt.Println("Use the -help parameter to get more information how to use me!")
 	}
-	/*
-		app.Flags = []cli.Flag{
-			cli.StringFlag{
-				Name:   "instance, i",
-				Value:  "",
-				Usage:  "URL for the Gerrit instance",
-				EnvVar: "WATSON_INSTANCE",
-			},
-		}
-	*/
-	app.Commands = []cli.Command{
-		{
-			Name:    "list-projects",
-			Aliases: []string{"lp"},
-			Usage:   "Lists all projects of a Gerrit instance",
-			Action: func(c *cli.Context) {
-				println("added task: ", c.Args().First())
-			},
+
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:   "instance, i",
+			Value:  "",
+			Usage:  "URL for the Gerrit instance",
+			EnvVar: "WATSON_INSTANCE",
 		},
 	}
+
+	app.Commands = commands.Commands()
 
 	app.Run(os.Args)
 }
