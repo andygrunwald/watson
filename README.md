@@ -1,4 +1,6 @@
-# Watson
+# watson
+
+[![Build Status](https://travis-ci.org/andygrunwald/watson.svg?branch=master)](https://travis-ci.org/andygrunwald/watson)
 
 A crawler for Googles code review system [Gerrit](https://www.gerritcodereview.com/).
 
