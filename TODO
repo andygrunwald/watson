@@ -1,0 +1,9 @@
+# TODO List
+
+* Add inline documentation
+* Add usage for sub commands
+* Unit tests
+* Travis CI
+* Implement a logger with various log levels (-v, -vv, -vvv, like memcached)
+* Implement MySQL storage
+* Implement sortinghat storage
