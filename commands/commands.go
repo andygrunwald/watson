@@ -18,6 +18,20 @@ func Commands() []cli.Command {
 			Aliases: []string{"c"},
 			Usage:   "Crawls a Gerrit instance",
 			Action:  Crawl,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "storage, s",
+					Value:  "",
+					Usage:  "DSN of the storage backend",
+					EnvVar: "WATSON_STORAGE",
+				},
+				cli.StringFlag{
+					Name:   "identity-storage, is",
+					Value:  "",
+					Usage:  "DSN of the storage backend for identities",
+					EnvVar: "WATSON_IDENTITY_STORAGE",
+				},
+			},
 		},
 	}
 }

@@ -39,6 +39,24 @@ func main() {
 			Usage:  "URL for the Gerrit instance",
 			EnvVar: "WATSON_INSTANCE",
 		},
+		cli.StringFlag{
+			Name:   "username, u",
+			Value:  "",
+			Usage:  "Username for the Gerrit instance",
+			EnvVar: "WATSON_AUTH_USERNAME",
+		},
+		cli.StringFlag{
+			Name:   "password, p",
+			Value:  "",
+			Usage:  "Password for the Gerrit instance",
+			EnvVar: "WATSON_AUTH_PASSWORD",
+		},
+		cli.StringFlag{
+			Name:   "auth-mode, am",
+			Value:  "",
+			Usage:  "Mode for Gerrit authentication (basic or cookie)",
+			EnvVar: "WATSON_AUTH_MODE",
+		},
 	}
 
 	app.Commands = commands.Commands()
