@@ -19,7 +19,7 @@ type Identity struct {
 }
 
 const (
-	DefaultStorage = "sortinghat"
+	DefaultStorage = "null"
 )
 
 var (
