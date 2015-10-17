@@ -19,6 +19,12 @@ func Commands() []cli.Command {
 			Usage:   "Crawls a Gerrit instance",
 			Action:  Crawl,
 			Flags: []cli.Flag{
+				cli.IntFlag{
+					Name:   "concurrent, c",
+					Value:  200,
+					Usage:  "Number of concurrent HTTP(S) calls",
+					EnvVar: "WATSON_CONCURRENT",
+				},
 				cli.StringFlag{
 					Name:   "storage, s",
 					Value:  "",

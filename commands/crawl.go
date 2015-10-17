@@ -19,6 +19,9 @@ func Crawl(c *cli.Context) {
 		os.Exit(1)
 	}
 
+	concurrentNum := c.Int("concurrent")
+	s := client.NewSemaphore(concurrentNum)
+
 	watson.Authentication(c.String("auth-mode"), c.String("username"), c.String("password"))
 
 	var wg sync.WaitGroup
@@ -38,17 +41,16 @@ func Crawl(c *cli.Context) {
 		os.Exit(1)
 	}
 
-	i := 0
 	for name := range *projects {
-		i++
-		if i > 100 {
-			continue
-		}
 		wg.Add(1)
+		s.Lock()
 		log.Printf("Crawling project %s ...", name)
 
 		go func(crawl *client.Crawler, name string) {
-			defer wg.Done()
+			defer func(){
+				wg.Done()
+				s.Unlock()
+			}()
 			crawl.Changesets(name)
 
 			// * proceedChangeSetsDependsOnRelation
