@@ -25,8 +25,16 @@ func Crawl(c *cli.Context) {
 	watson.Authentication(c.String("auth-mode"), c.String("username"), c.String("password"))
 
 	var wg sync.WaitGroup
-	storageChan := storage.GetStorage(c.String("storage"), &wg)
+	// Init storage
+	storageChan, store, err := storage.GetStorage(c.String("storage"), &wg)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	identityChan := identity.GetStorage(c.String("identity-storage"), &wg)
+	defer func(){
+		store.Close()
+	}()
 
 	crawl := client.NewCrawler(watson)
 	crawl.ChangeSetQueryLimit = watson.GetQueryLimit()

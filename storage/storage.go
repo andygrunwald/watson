@@ -3,11 +3,14 @@ package storage
 import (
 	"github.com/andygrunwald/go-gerrit"
 	"sync"
+	"net/url"
+	"io"
 )
 
 type Storage interface {
-	Init(c chan *ChangeSet)
+	Init(u *url.URL, c chan *ChangeSet) error
 	Listen()
+	io.Closer
 }
 
 type ChangeSet struct {
@@ -18,26 +21,39 @@ type ChangeSet struct {
 
 type Project gerrit.ProjectInfo
 
+const (
+	DefaultStorage = "mysql"
+)
+
 var (
 	register = map[string]Storage{}
 )
 
-func GetStorage(storage string, wg *sync.WaitGroup) chan *ChangeSet {
+func GetStorage(storage string, wg *sync.WaitGroup) (chan *ChangeSet, Storage, error) {
+	var s Storage
 	changeChan := make(chan *ChangeSet, 1)
 
-	var s Storage
-	var ok bool
-	if s, ok = register[storage]; !ok {
-		// TODO Add a null storage here
-		s = register["mysql"]
+	u, err := url.Parse(storage)
+	if err != nil {
+		return changeChan, s, err
 	}
 
-	s.Init(changeChan)
+	var ok bool
+	if s, ok = register[u.Scheme]; !ok {
+		// TODO Add a null storage here
+		s = register[DefaultStorage]
+	}
+
+	err = s.Init(u, changeChan)
+	if err != nil {
+		return changeChan, s, err
+	}
+
 	wg.Add(1)
 	go func() {
 		s.Listen()
 		wg.Done()
 	}()
 
-	return changeChan
+	return changeChan, s, nil
 }
