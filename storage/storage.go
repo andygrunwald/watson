@@ -22,7 +22,7 @@ type ChangeSet struct {
 type Project gerrit.ProjectInfo
 
 const (
-	DefaultStorage = "mysql"
+	DefaultStorage = "null"
 )
 
 var (
