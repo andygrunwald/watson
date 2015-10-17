@@ -38,6 +38,7 @@ func (s *MySQLStorage) Init(u *url.URL, c chan *ChangeSet) error {
 
 func (s *MySQLStorage) Listen() {
 	for c := range s.events {
+		// TODO Consume events and store them
 		log.Println("MySQLStorage: New Event", c)
 	}
 }
