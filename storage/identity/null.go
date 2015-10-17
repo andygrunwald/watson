@@ -4,23 +4,23 @@ import (
 	"net/url"
 )
 
-type Null struct {
+type NullStorage struct {
 	events chan *Identity
 }
 
 func init() {
-	register["null"] = &Null{}
+	register["null"] = &NullStorage{}
 }
 
-func (s *Null) Init(u *url.URL, c chan *Identity) error {
+func (s *NullStorage) Init(u *url.URL, c chan *Identity) error {
 	s.events = c
 	return nil
 }
 
-func (s *Null) Listen() {
+func (s *NullStorage) Listen() {
 	<- s.events
 }
 
-func (s *Null) Close() error {
+func (s *NullStorage) Close() error {
 	return nil
 }
