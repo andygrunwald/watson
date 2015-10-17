@@ -2,11 +2,14 @@ package identity
 
 import (
 	"sync"
+	"net/url"
+	"io"
 )
 
 type Storage interface {
-	Init(c chan *Identity)
+	Init(u *url.URL, c chan *Identity) error
 	Listen()
+	io.Closer
 }
 
 type Identity struct {
@@ -15,25 +18,39 @@ type Identity struct {
 	Username string
 }
 
+const (
+	DefaultStorage = "sortinghat"
+)
+
 var (
 	register = map[string]Storage{}
 )
 
-func GetStorage(storage string, wg *sync.WaitGroup) chan *Identity {
+func GetStorage(storage string, wg *sync.WaitGroup) (chan *Identity, Storage, error) {
+	var s Storage
 	identityChan := make(chan *Identity, 1)
 
-	var s Storage
-	var ok bool
-	if s, ok = register[storage]; !ok {
-		// TODO Add a null storage here
-		s = register["sortinghat"]
+	u, err := url.Parse(storage)
+	if err != nil {
+		return identityChan, s, err
 	}
-	s.Init(identityChan)
+
+	var ok bool
+	if s, ok = register[u.Scheme]; !ok {
+		// TODO Add a null storage here
+		s = register[DefaultStorage]
+	}
+
+	err = s.Init(u, identityChan)
+	if err != nil {
+		return identityChan, s, err
+	}
+
 	wg.Add(1)
 	go func() {
 		s.Listen()
 		wg.Done()
 	}()
 
-	return identityChan
+	return identityChan, s, nil
 }

@@ -31,9 +31,14 @@ func Crawl(c *cli.Context) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	identityChan := identity.GetStorage(c.String("identity-storage"), &wg)
+	identityChan, identityStore, err  := identity.GetStorage(c.String("identity-storage"), &wg)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	defer func(){
 		store.Close()
+		identityStore.Close()
 	}()
 
 	crawl := client.NewCrawler(watson)
