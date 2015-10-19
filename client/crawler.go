@@ -58,23 +58,21 @@ func (c *Crawler) Changesets(project string) {
 		opt.Limit = c.ChangeSetQueryLimit
 		opt.AdditionalFields = []string{
 			"DETAILED_ACCOUNTS",
-			/*
-				"LABELS",
-				"WEB_LINKS",
-				"ALL_FILES",
-				"MESSAGES",
-				"CHANGE_ACTIONS",
-				"REVIEWED",
-				"WEB_LINKS",
-				"COMMIT_FOOTERS",
-				"ALL_REVISIONS",
-				"DOWNLOAD_COMMANDS",
-				"CURRENT_COMMIT",
-				"ALL_COMMITS",
-				"CURRENT_FILES",
-				"CURRENT_REVISION",
-				"DETAILED_LABELS",
-			*/
+			"LABELS",
+			"WEB_LINKS",
+			"ALL_FILES",
+			"MESSAGES",
+			"CHANGE_ACTIONS",
+			"REVIEWED",
+			"WEB_LINKS",
+			"COMMIT_FOOTERS",
+			"ALL_REVISIONS",
+			"DOWNLOAD_COMMANDS",
+			"CURRENT_COMMIT",
+			"ALL_COMMITS",
+			"CURRENT_FILES",
+			"CURRENT_REVISION",
+			"DETAILED_LABELS",
 		}
 
 		changes, resp, err := c.Client.Gerrit.Changes.QueryChanges(opt)
@@ -97,12 +95,46 @@ func (c *Crawler) Changesets(project string) {
 				Change: &change,
 			}
 			c.Storage <- cs
+
+			// Collect identities
 			c.IdentityStorage <- identity.AccountInfo(change.Owner).Identify()
+
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Approved).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Rejected).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Recommended).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Disliked).Identify()
+
+			for _, ai := range change.Labels.CodeReview.All {
+				c.IdentityStorage <- identity.ApprovalInfo(ai).Identify()
+			}
+
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Approved).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Rejected).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Recommended).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Disliked).Identify()
+
+			for _, ai := range change.Labels.Verified.All {
+				c.IdentityStorage <- identity.ApprovalInfo(ai).Identify()
+			}
+
+			for _, ai := range change.RemovableReviewers {
+				c.IdentityStorage <- identity.AccountInfo(ai).Identify()
+			}
+
+			for _, cmi := range change.Messages {
+				c.IdentityStorage <- identity.AccountInfo(cmi.Author).Identify()
+			}
+
+			for _, ri := range change.Revisions {
+				c.IdentityStorage <- identity.AccountInfo(ri.Uploader).Identify()
+				c.IdentityStorage <- identity.GitPersonInfo(ri.Commit.Author).Identify()
+				c.IdentityStorage <- identity.GitPersonInfo(ri.Commit.Committer).Identify()
+
+				// Parents   []CommitInfo  `json:"parents"`
+			}
+
 			// TODO Add all identities to IdentityStorage
 			// GitPersonInfo, AccountInfo, EmailInfo
-
-			// Import this changeset :)
-			//$this->proceedChangeset($changeSet, $project);
 		}
 
 		// Last changeset have a key: _more_changes (set to true)
