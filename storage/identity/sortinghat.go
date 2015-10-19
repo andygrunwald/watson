@@ -47,6 +47,12 @@ func (s *StortinghatStorage) Init(u *url.URL, c chan *Identity) error {
 
 func (s *StortinghatStorage) Listen() {
 	for c := range s.events {
+
+		// If we recieve a nil struct, skip it
+		if c == nil {
+			continue
+		}
+
 		err := s.add(c)
 		if err != nil {
 			log.Printf("Stortinghat: %s\n", err)
