@@ -1,9 +1,9 @@
 package identity
 
 import (
-	"sync"
-	"net/url"
 	"io"
+	"net/url"
+	"sync"
 )
 
 type Storage interface {

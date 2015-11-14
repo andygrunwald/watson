@@ -2,9 +2,9 @@ package storage
 
 import (
 	"github.com/andygrunwald/go-gerrit"
-	"sync"
-	"net/url"
 	"io"
+	"net/url"
+	"sync"
 )
 
 type Storage interface {

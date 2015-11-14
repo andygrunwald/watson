@@ -127,8 +127,8 @@ func (c *Crawler) Changesets(project string) {
 
 			for _, ri := range change.Revisions {
 				c.IdentityStorage <- identity.AccountInfo(ri.Uploader).Identify()
-				c.IdentityStorage <- identity.GitPersonInfo(ri.Commit.Author).Identify()
-				c.IdentityStorage <- identity.GitPersonInfo(ri.Commit.Committer).Identify()
+				//c.IdentityStorage <- identity.GitPersonInfo(ri.Commit.Author).Identify()
+				//c.IdentityStorage <- identity.GitPersonInfo(ri.Commit.Committer).Identify()
 
 				// Parents   []CommitInfo  `json:"parents"`
 			}

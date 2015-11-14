@@ -1,26 +1,26 @@
 package identity
 
 import (
-	"log"
-	"net/url"
-	"net/http"
-	"strings"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 type StortinghatStorage struct {
 	events chan *Identity
-	mode int
-	u *url.URL
+	mode   int
+	u      *url.URL
 	client *http.Client
 	source string
 }
 
 const (
-	DefaultSource = "gerrit"
+	DefaultSource         = "gerrit"
 	SortinghatAddEndpoint = "/v1.0/identities"
-	ModeHTTP = iota
+	ModeHTTP              = iota
 	ModeHTTPS
 )
 
@@ -75,7 +75,7 @@ func (s *StortinghatStorage) buildApiURL(u *url.URL) *url.URL {
 
 	// Set correct path
 	if strings.HasSuffix(u.Path, "/") {
-		u.Path = u.Path[0:len(u.Path)-1]
+		u.Path = u.Path[0 : len(u.Path)-1]
 	}
 	u.Path += SortinghatAddEndpoint
 	return u

@@ -18,7 +18,7 @@ func (s *NullStorage) Init(u *url.URL, c chan *ChangeSet) error {
 }
 
 func (s *NullStorage) Listen() {
-	<- s.events
+	<-s.events
 }
 
 func (s *NullStorage) Close() error {
