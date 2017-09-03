@@ -2,10 +2,11 @@ package client
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/andygrunwald/go-gerrit"
 	"github.com/andygrunwald/watson/storage"
 	"github.com/andygrunwald/watson/storage/identity"
-	"log"
 )
 
 type Crawler struct {
@@ -99,21 +100,21 @@ func (c *Crawler) Changesets(project string) {
 			// Collect identities
 			c.IdentityStorage <- identity.AccountInfo(change.Owner).Identify()
 
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Approved).Identify()
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Rejected).Identify()
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Recommended).Identify()
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.CodeReview.Disliked).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["CodeReview"].Approved).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["CodeReview"].Rejected).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["CodeReview"].Recommended).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["CodeReview"].Disliked).Identify()
 
-			for _, ai := range change.Labels.CodeReview.All {
+			for _, ai := range change.Labels["CodeReview"].All {
 				c.IdentityStorage <- identity.ApprovalInfo(ai).Identify()
 			}
 
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Approved).Identify()
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Rejected).Identify()
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Recommended).Identify()
-			c.IdentityStorage <- identity.AccountInfo(change.Labels.Verified.Disliked).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["Verified"].Approved).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["Verified"].Rejected).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["Verified"].Recommended).Identify()
+			c.IdentityStorage <- identity.AccountInfo(change.Labels["Verified"].Disliked).Identify()
 
-			for _, ai := range change.Labels.Verified.All {
+			for _, ai := range change.Labels["Verified"].All {
 				c.IdentityStorage <- identity.ApprovalInfo(ai).Identify()
 			}
 
